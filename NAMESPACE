@@ -3,4 +3,5 @@
 export(applyNS)
 export(base_mapply)
 export(create_midprice)
-export(extract_LOBSTER_files)
+export(extract_lobster)
+export(readin_lobster)
