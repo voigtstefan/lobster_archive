@@ -7,8 +7,5 @@
 readin_lobster(ticker, date, nlevels = 1, output = "ALL")
 }
 \description{
-This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!) 
-import dplyr
-import data.table
-import dtplyr
+This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)
 }

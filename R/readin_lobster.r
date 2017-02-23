@@ -1,9 +1,9 @@
 #' readin_lobster
 #'
 #' This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!) 
-#' import dplyr
-#' import data.table
-#' import dtplyr
+#' @import data.table
+#' @import dplyr
+#' @import dtplyr
 #' @export
 readin_lobster	<- function(ticker,date,nlevels=1,output='ALL'){
 	if (missing(ticker))
