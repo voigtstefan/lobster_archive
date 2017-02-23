@@ -5,7 +5,6 @@
 #' import data.table
 #' import dtplyr
 #' @export
-
 readin_lobster	<- function(ticker,date,nlevels=1,output='ALL'){
 	if (missing(ticker))
 		stop("Need to specify valid ticker.")
