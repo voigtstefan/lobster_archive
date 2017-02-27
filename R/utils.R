@@ -1,15 +1,15 @@
 #' plot_lobster
 #'
-#' @import ggplot2
-#' @import scales
+#' @importFrom ggplot2 ggplot scale_x_datetime
 #' @export
-plot_lobster<-function(v,var,date) ggplot(v,aes(x=as.POSIXct(date,tz=Sys.timezone())+Secs,y=eval(parse(text=var))))+geom_line()+ scale_x_datetime(breaks=date_breaks("1 hour"), labels=date_format("%H:%M",tz=Sys.timezone()))+xlab('Time')
-
+plot_lobster<-function(v,var,date=NA){
+    if(is.na(date)) date=as.Date(v$Time[1])
+    ggplot(v,aes(x=as.POSIXct(date,tz=Sys.timezone())+Secs,y=eval(parse(text=var))))+geom_line()+ scale_x_datetime(breaks=date_breaks("1 hour"), labels=date_format("%H:%M",tz=Sys.timezone()))+xlab('Time')
+   }
 #' applyNS
 #'
 #' Counts number of trades during last k seconds
 #' @export
-
 applyNS 	<- function(s,k=1.5){
 		cnt 	<- numeric(length(s))
   		for(i in 1:length(s)){

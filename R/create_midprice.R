@@ -14,6 +14,7 @@
 #'	4. Trades:
 #'		b. If multiple transactions have the same time stamp, use the median price.
 #' This function generates the Ledoit-Wolf covariance estimator and mean vector as inputs to draw from the predictive posterior distribution 
+#' @importFrom stats median
 #' @export
 create_midprice <- function(filenames,date,starttrade = 9.5*60*60, endtrade = 16*60*60){
 

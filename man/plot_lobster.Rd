@@ -4,7 +4,7 @@
 \alias{plot_lobster}
 \title{plot_lobster}
 \usage{
-plot_lobster(v, var, date)
+plot_lobster(v, var, date = NA)
 }
 \description{
 plot_lobster
