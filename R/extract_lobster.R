@@ -5,7 +5,7 @@
 extract_lobster <- function(date, ticker,nlevels=1){
 	orderbook_file <- paste(paste(ticker , strftime(date,'%Y-%m-%d') ,34200000,57600000,"orderbook" ,nlevels ,sep = "_"),"csv",sep = ".")
 	message_file <- paste(paste(ticker , strftime(date,'%Y-%m-%d'),34200000,57600000,"message" ,nlevels ,sep = "_"),"csv",sep = ".")
-	if(!all(file.exists(c(orderbook_file,message_file))){
+	if(!all(file.exists(c(orderbook_file,message_file)))){
 		zipfile <- paste0('../RawLobster/',ticker,'.7z')
 		command <- paste0('7za e ',zipfile,' *',strftime(date,'%Y-%m-%d'),'*.csv -r',sep='')
 		system(command)}
