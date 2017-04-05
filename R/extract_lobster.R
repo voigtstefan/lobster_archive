@@ -9,5 +9,5 @@ extract_lobster <- function(date, ticker,nlevels=1, folder='.'){
 		zipfile <- paste0(folder,'/',ticker,'.7z')
 		command <- paste0('7za e ',zipfile,' *',strftime(date,'%Y-%m-%d'),'*.csv -r',sep='')
 		system(command)}
-	return <- c(orderbook_file,message_file)
+	c(orderbook_file,message_file)
 	}
