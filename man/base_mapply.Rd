@@ -8,4 +8,7 @@ base_mapply(x, width, FUN, ...)
 }
 \description{
 Base mapply function
+Use this function to compute 'rolling-window'-like calculations with columnd depend window sizes.
+e.g. if you want to compute the rolling mean over all trades which took place during the last 1.5 seconds
+the command is base_mapply(lobster$Price,width=applyNS(lobster$Secs),FUN=mean)
 }

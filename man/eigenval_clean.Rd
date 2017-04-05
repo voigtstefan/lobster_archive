@@ -2,10 +2,10 @@
 % Please edit documentation in R/eigenvalue_cleaning.R
 \name{eigenval_clean}
 \alias{eigenval_clean}
-\title{eigenvalue cleaning following Hautsch,Kyj & Oomen (2010)}
+\title{eigenvalue cleaning following Hautsch,Kyj, Oomen 2010}
 \usage{
 eigenval_clean(cov_org)
 }
 \description{
-eigenvalue cleaning following Hautsch,Kyj & Oomen (2010)
+eigenvalue cleaning following Hautsch,Kyj, Oomen 2010
 }

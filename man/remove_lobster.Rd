@@ -4,8 +4,8 @@
 \alias{remove_lobster}
 \title{remove_lobster}
 \usage{
-remove_lobster(date, ticker, nlevels = 1)
+remove_lobster(date, ticker, nlevels = 1, folder = ".")
 }
 \description{
-This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)
+This function removes extracted lobster data files
 }

@@ -4,8 +4,7 @@
 \alias{create_midprice}
 \title{create midprice}
 \usage{
-create_midprice(filenames, date, starttrade = 9.5 * 60 * 60, endtrade = 16 *
-  60 * 60)
+create_midprice(ticker, date, nlevels = 1, folder = ".")
 }
 \description{
 Cleans quote data according to Barndorff-Nielsen et al. (2009)

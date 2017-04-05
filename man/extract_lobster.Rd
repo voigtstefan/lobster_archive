@@ -4,7 +4,7 @@
 \alias{extract_lobster}
 \title{extract_lobster}
 \usage{
-extract_lobster(date, ticker, nlevels = 1)
+extract_lobster(date, ticker, nlevels = 1, folder = ".")
 }
 \description{
 This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)

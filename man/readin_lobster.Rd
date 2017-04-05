@@ -4,8 +4,8 @@
 \alias{readin_lobster}
 \title{readin_lobster}
 \usage{
-readin_lobster(ticker, date, nlevels = 1, output = "ALL")
+readin_lobster(ticker, date, nlevels = 1, output = "ALL", folder = ".")
 }
 \description{
-This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)
+This function reads-in extracted Lobster Files (either Orderbook, Messagebook or both)
 }

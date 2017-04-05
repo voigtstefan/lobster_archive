@@ -1,5 +1,5 @@
-#' eigenvalue cleaning following Hautsch,Kyj & Oomen (2010)
-#' @eport
+#' eigenvalue cleaning following Hautsch,Kyj, Oomen 2010
+#' @export
 
 eigenval_clean <- function(cov_org){
 

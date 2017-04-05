@@ -14,17 +14,16 @@
 #'	4. Trades:
 #'		b. If multiple transactions have the same time stamp, use the median price.
 #' This function generates the Ledoit-Wolf covariance estimator and mean vector as inputs to draw from the predictive posterior distribution 
+#' @importFrom zoo rollmedian
 #' @importFrom stats median
 #' @export
-create_midprice <- function(filenames,date,starttrade = 9.5*60*60, endtrade = 16*60*60){
+create_midprice <- function(ticker,date,nlevels=1,folder='.'){
 
-	orderbook_file <- filenames[1]
-	message_file <- filenames[2]
-	dataM <- fread(message_file, header = F, sep = ',')
-	columns <- c( "Time" , "Type" , "OrderID" , "Size" , "Price" , "TradeDirection" )
-	setnames(dataM, columns)
+  start		<- 3600*9.5
+  end 		<- 3600*16 
+  dataM <- readin_lobster(ticker,date,nlevels,output='MB',folder)
 	numberObservations <- dim(dataM)[1]
-	dataM <- dataM%>%filter(Time>starttrade& Time<endtrade & Price>0)
+	dataM <- dataM%>%filter(Secs>start& Secs<end & Price>0 , Type!=6)
 
 	tradehaltIdx = which(dataM[,2] == 7 & dataM[,5] == -1 );
 	tradequoteIdx = which(dataM[,2] == 7 & dataM[,5] == 0 );
@@ -39,22 +38,16 @@ create_midprice <- function(filenames,date,starttrade = 9.5*60*60, endtrade = 16
 	if(length(traderesumeIdx) !=0)
 		cat(" Data resumes trading! at time stamp(s) ", dataM[traderesumeIdx,1],"\n")
 
-	timeindex <-dataM$Time>=starttrade & dataM$Time<=endtrade
+	timeindex <-dataM$Secs>=start & dataM$Secs<=end
 
-	dataO <- fread(orderbook_file, header = F, sep = ',')
-	columns2 <- c("ASKp1" , "ASKs1" , "BIDp1",  "BIDs1")
-
-	setnames(dataO, columns2)
-
+	dataO <- readin_lobster(ticker,date,nlevels,output='OB',folder)
 	dataO <- dataO[timeindex,]
-	dataO$Time <- dataM$Time
-	dataO <- dataO%>%mutate(ASKp1 = ASKp1/10000, BIDp1 = BIDp1/10000,MIDp = (ASKp1+BIDp1)/2, Spread=ASKp1-BIDp1)
+	dataO <- dataO%>%mutate(Spread=Askp1-Bidp1)
 	
 	medspread <- median(dataO$Spread)
 	dataO <- dataO%>%filter( Spread >= 0 & Spread < 50*medspread)
-	dataO <- dataO%>%mutate(temp.roll = rollmedian(x=MIDp,25,align='center',fill = median(MIDp)))
-	dataO <- dataO%>%filter( MIDp <= 10* temp.roll)
-	dataO<-dataO%>%group_by(Time)%>%summarise(MIDp=median(MIDp))
-	dataO$Date <- as.POSIXct(date, units="days") +dataO$Time
+	dataO <- dataO%>%mutate(temp.roll = rollmedian(x=Midquote,25,align='center',fill = median(Midquote)))
+	dataO <- dataO%>%filter( Midquote <= 10* temp.roll)
+	dataO<-dataO%>%group_by(Secs)%>%summarise(Midquote=median(Midquote), Time=Time[1])
 	return(dataO)
 	}
