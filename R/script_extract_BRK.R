@@ -1,12 +1,5 @@
-
-x <- c('data.table','dplyr','dtplyr','zoo','bit64','xts','highfrequency','parallel')
-
-ticker <- as.character(read.table('AddInformation/assets.csv')$x)
-sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)
-
-
-brk_covariance <- function(ticker, day, nob = 6, folder='.')
-
+brk_covariance <- function(ticker, date, nob = 6, folder='.')
+library(xts) # as.xts
 N <- length(ticker)
 midquotedata <- vector("list", N)
 names(midquotedata) <- ticker
@@ -19,11 +12,11 @@ cstar <- (12^2/0.269)^(1/5)
 for (i in 1:N){
 	stock <- ticker[i]
 		tryCatch({
-			tmp <- extract.Lobster(ticker,date)
-			tmp <- tmp%>%transform(Midquote=(Askp1+Bidp1)/2)%>%select(Secs,Midquote)
+			extract_lobster(stock,date, folder=folder)
+			tmp <- readin_lobster(stock,date)
 			tmp <- as.xts(tmp$Midquote,order.by=sdate+tmp$Secs)
 			midquotedata[[i]]<-log(tmp)
-		},error=function(cond)cat('Not existent: ',ticker))
+		},error=function(cond)cat('Not existent: ',stock))
 }
 
 cat('# Read-in complete \n')
