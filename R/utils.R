@@ -73,7 +73,7 @@ autocovariance<-function(rftdata, hval){
 
 
 #' IV estimate based on 20 minute RV estimates
-#' 
+#' @import lubridate
 #' @export
 IVhat_f <- function(rftdata){
   seconds <- cbind(hour(time(rftdata)),minute(time(rftdata)),second(time(rftdata)))%*%c(3600,60,1)	

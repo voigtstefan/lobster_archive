@@ -25,11 +25,14 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder='.'){
        remove_lobster(ticker,date)
   	},error=function(e) {cat('Not existent: ',ticker,'\n')})
   }
-
+  setwd('..')
+  unlink(date, recursive=TRUE)
+  
   cstar <- (12^2/0.269)^(1/5)
 
   nobs <- unlist(as.numeric(as.character(lapply(midquotedata,nrow))))
   not_existent<-tickerlist[is.na(nobs)]
+  cat('Missing tickers: ', not_existent,'\n')
   midquotedata[is.na(nobs)]<-NULL
   nobs <- na.omit(nobs)
   nobs_index <- sort(nobs, index=TRUE, decreasing=TRUE)$ix
@@ -38,7 +41,6 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder='.'){
   blockspace <- matrix(NA,ncol=Nadj,nrow=Nadj)
   myblocks <- unlist(lapply(groups,length))
   data_sorted <- midquotedata[names(midquotedata)[nobs_index]]
-
 
   groupval<-function(z){
   	GLrange <- 1:sum(myblocks[1:(nob-z+1)])   
@@ -72,15 +74,15 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder='.'){
     return(tmpspace)
   }        
 
-  if(Sys.info()['sysname']!='Windows'){
-	no_cores <- detectCores() 
-	cl<-makeCluster(max(nob,no_cores),type='FORK')
-	a<-parLapply(cl, 1:nob, groupval)
-	stopCluster(cl)
-  }
+  #if(Sys.info()['sysname']!='Windows'){
+	#no_cores <- detectCores() 
+	#cl<-makeCluster(max(nob,no_cores),type='FORK')
+	#a<-parLapply(cl, 1:nob, groupval)
+	#stopCluster(cl)
+  #}
 
-  if(Sys.info()['sysname']=='Windows') a<-lapply(1:nob,groupval)
-	
+  #if(Sys.info()['sysname']=='Windows') a<-lapply(1:nob,groupval)
+  a<-lapply(1:nob,groupval)
   for(z in 1:nob){
   	GLrange = 1:sum(myblocks[1:(nob-z+1)])   
   	for(w in 1:z){
@@ -96,7 +98,5 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder='.'){
   rownames(BRK) <- names(data_sorted)
   colnames(BRK) <- names(data_sorted)
   BRK <- BRK[names(midquotedata),names(midquotedata)]
-  setwd('..')
   saveRDS(BRK,paste0('BRK_',date,'_',nob,'.rds'))
-  unlink(date)
 }
