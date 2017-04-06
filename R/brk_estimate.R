@@ -1,9 +1,9 @@
 #' BRK Estimate
 #' ticker <- as.character(read.table('AddInformation/assets.csv')$x)
 #' sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)
-#' @import xts
-#' @import parallel
-#' @import highfrequency
+#' @importFrom xts as.xts 
+#' @importFrom xts to.period 
+#' @importFrom highfrequency refreshTime
 #' @export
 
 brk_estimate <- function(tickerlist, date, nob = 6, folder='.'){
