@@ -4,7 +4,7 @@
 \alias{remove_lobster}
 \title{remove_lobster}
 \usage{
-remove_lobster(date, ticker, nlevels = 1, folder = ".")
+remove_lobster(ticker, date, nlevels = 1, folder = ".")
 }
 \description{
 This function removes extracted lobster data files

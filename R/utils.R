@@ -59,3 +59,28 @@ parzen.kernel<- function(x){
 #' @export
 exponential.kernel <- function(x) exp(-abs(x))*(x<=0)
 
+
+#' Autocovariane
+#' 
+#' computes the Autocovariance matrices
+#' inputs are Refresh time sampled returns and optimal Hval
+#' @export
+autocovariance<-function(rftdata, hval){
+  GammaH = t(rftdata[(abs(hval)+1):nrow(rftdata),])%*%rftdata[1:(nrow(rftdata)-abs(hval)),]
+  if(hval<0) return(t(GammaH))
+  if(hval>=0) return(GammaH)
+}
+
+
+#' IV estimate based on 20 minute RV estimates
+#' 
+#' @export
+IVhat_f <- function(rftdata){
+  seconds <- cbind(hour(time(rftdata)),minute(time(rftdata)),second(time(rftdata)))%*%c(3600,60,1)	
+  prevtime <- rep(NA,1199)
+  for (sec in 1:1199){
+    grid <- seq(from=34200+sec, by=20*60, to=57600)
+    prevtime[sec] <- sum(rftdata[findInterval(grid,seconds)]^2,na.rm=TRUE)
+  }
+  return(mean(prevtime,na.rm=TRUE))
+}
