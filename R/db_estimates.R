@@ -2,7 +2,6 @@
 #' data(lobster)
 #' lobster
 #' @export
-#' dplyr %>%
 db_estimates <- function(lobster,testing.time = unique(floor(data$Secs/2)*2)){
 
   #L_m <- 5  # Parzen Kernel Bandwith
@@ -19,6 +18,27 @@ db_estimates <- function(lobster,testing.time = unique(floor(data$Secs/2)*2)){
   n_mu   <- rep(NA,length(testing.time))
   n_sigma<- rep(NA,length(testing.time))
   n_lag  <- rep(NA,length(testing.time))
+
+
+  dat_m <- data%>%filter(Secs<testing.time[500] & Secs>testing.time[500]-bndw_m)%>%transform(w_mu=parzen.kernel((Secs-testing.time[500])/bndw_m))
+  n_mu <- sum(dat_m$w_mu)
+  mu_t <- sum(dat_m$w_mu*dat_m$lret)/bndw_m
+
+  dat_v <- data%>%filter(Secs<testing.time[500] & Secs>testing.time[500]-bndw_v)%>%transform(w_v=parzen.kernel((Secs-testing.time[500])/bndw_v))
+  n_v <- sum(dat_v$w_v)
+
+  wdxi <- dat_v$w_v*dat_v$lret
+  v0 <- sum(wdxi^2)
+
+  c <- 2.6614
+  max_lag <- 20
+  q <- 2
+  T <- n_mu[i]
+
+  n <- round(4*(T/100)^(4/25))
+  root <- 1/(2*q+1)
+
+  ac <- rep(1,n)
 
 
   for (i in 1:length(testing.time)){

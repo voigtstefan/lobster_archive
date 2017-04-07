@@ -37,7 +37,7 @@ base_mapply 	<- function(x, width, FUN, ...){
     			if(i < width) return(NA_real_)
     			return(FUN(data[(i-(width-1)):i], ...))
  		}
-	  	mapply(FUN = f, 
+	  	mapply(FUN = f,
          	seq_along(x), width,
          	MoreArgs = list(data = x))
 }
@@ -46,22 +46,22 @@ base_mapply 	<- function(x, width, FUN, ...){
 #'
 #' @export
 parzen.kernel<- function(x){
-  anstar = rep(0,length(x))	
-  anstar[x > 1] = 0
-  anstar[x <= 0.5] = 1 - 6*x[x<= 0.5]^2 +6*x[x <= 0.5]^3
-  anstar[(x <= 1) & (x > 0.5)] = 2*(1-x[x <= 1 & (x > 0.5)])^3
-  anstar[x < 0] = 0
-  return(abs(anstar))
+  w <- rep(0,length(x))
+  x <- abs(x)
+  w[x > 1] <- 0
+  w[x <= 0.5] <- 1 - 6*x[x<= 0.5]^2 +6*x[x <= 0.5]^3
+  w[(x <= 1) & (x > 0.5)] = 2*(1-x[x <= 1 & (x > 0.5)])^3
+  return(w)
 }
 
 #' Exponential kernel
-#' 
+#'
 #' @export
 exponential.kernel <- function(x) exp(-abs(x))*(x<=0)
 
 
 #' Autocovariane
-#' 
+#'
 #' computes the Autocovariance matrices
 #' inputs are Refresh time sampled returns and optimal Hval
 #' @export
@@ -78,7 +78,7 @@ autocovariance<-function(rftdata, hval){
 #' @importFrom lubridate second
 #' @export
 IVhat_f <- function(rftdata){
-  seconds <- cbind(hour(time(rftdata)),minute(time(rftdata)),second(time(rftdata)))%*%c(3600,60,1)	
+  seconds <- cbind(hour(time(rftdata)),minute(time(rftdata)),second(time(rftdata)))%*%c(3600,60,1)
   prevtime <- rep(NA,1199)
   for (sec in 1:1199){
     grid <- seq(from=34200+sec, by=20*60, to=57600)
