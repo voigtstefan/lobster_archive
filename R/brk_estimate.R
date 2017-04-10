@@ -20,6 +20,7 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         tryCatch({
             invisible(extract_lobster(ticker, date, folder = paste0("../", folder)))
             tmp <- readin_lobster(ticker, date)
+            tmp <- tmp %>%filter(Type==4 | Type==5)%>%select(Midquote,Time)
             tmp <- as.xts(tmp$Midquote, order.by = tmp$Time)
             midquotedata[[i]] <- log(tmp)
             remove_lobster(ticker, date)
@@ -32,6 +33,9 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
     
     cstar <- (12^2/0.269)^(1/5)
     
+    midquotedata <- lapply(midquotedata,na.omit)
+    midquotedata <- lapply(midquotedata,function(x) x[!is.infinite(x)])
+    
     nobs <- unlist(as.numeric(as.character(lapply(midquotedata, nrow))))
     not_existent <- tickerlist[is.na(nobs)]
     cat("Missing tickers: ", not_existent, "\n")
@@ -43,7 +47,6 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
     blockspace <- matrix(NA, ncol = Nadj, nrow = Nadj)
     myblocks <- unlist(lapply(groups, length))
     data_sorted <- midquotedata[names(midquotedata)[nobs_index]]
-    data_sorted <- lapply(data_sorted,na.omit)
     groupval <- function(z) {
         GLrange <- 1:sum(myblocks[1:(nob - z + 1)])
         print(z)
