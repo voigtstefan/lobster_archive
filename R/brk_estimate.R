@@ -43,7 +43,7 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
     blockspace <- matrix(NA, ncol = Nadj, nrow = Nadj)
     myblocks <- unlist(lapply(groups, length))
     data_sorted <- midquotedata[names(midquotedata)[nobs_index]]
-    
+    data_sorted <- lapply(data_sorted,na.omit)
     groupval <- function(z) {
         GLrange <- 1:sum(myblocks[1:(nob - z + 1)])
         print(z)
