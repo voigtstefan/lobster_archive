@@ -8,17 +8,17 @@ create_midprice(ticker, date, nlevels = 1, folder = ".")
 }
 \description{
 Cleans quote data according to Barndorff-Nielsen et al. (2009)
-	1. Delete entries with a time stamp outside 9:30 am until 4 pm (IMPLEMENTED)
-	2. Delete entries with bid, ask or transaction price equal to zero. (IMPLEMENTED)
-	3. Quotes: 
-	a. When multiple quotes have the same time stamp, we replace all these with a single entry
-	   with the median bid and median ask price.
-	b. Delete entries for which the spread is negative. (IMPLEMENTED)
-	c. Delete entries for which the spread is more that 50 times the median spread on that day. (IMPLEMENTED)
-	d. Delete entries for which the mid-quote deviated by more than 10 mean absolute deviations
-	   from a rolling centred median (excluding the observation under consideration) of 50
-	   observations (25 observations before and 25 after). (IMPLEMENTED)
-4. Trades:
-	b. If multiple transactions have the same time stamp, use the median price.
+\t1. Delete entries with a time stamp outside 9:30 am until 4 pm (IMPLEMENTED)
+\t2. Delete entries with bid, ask or transaction price equal to zero. (IMPLEMENTED)
+\t3. Quotes: 
+\t\ta. When multiple quotes have the same time stamp, we replace all these with a single entry
+\t\t   with the median bid and median ask price.
+\t\tb. Delete entries for which the spread is negative. (IMPLEMENTED)
+\t\tc. Delete entries for which the spread is more that 50 times the median spread on that day. (IMPLEMENTED)
+\t\td. Delete entries for which the mid-quote deviated by more than 10 mean absolute deviations
+\t\t   from a rolling centred median (excluding the observation under consideration) of 50
+\t\t   observations (25 observations before and 25 after). (IMPLEMENTED)
+\t4. Trades:
+\t\tb. If multiple transactions have the same time stamp, use the median price.
 This function generates the Ledoit-Wolf covariance estimator and mean vector as inputs to draw from the predictive posterior distribution
 }

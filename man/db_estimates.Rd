@@ -6,7 +6,7 @@
 data(lobster)
 lobster}
 \usage{
-db_estimates(lobster, testing.time = unique(floor(data$Secs/2) * 2))
+db_estimates(lobster, testing.time = lobster$Secs[-c(1:5)])
 }
 \description{
 Drift-Burst t-statistic

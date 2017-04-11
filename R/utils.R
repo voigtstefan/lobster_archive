@@ -53,9 +53,36 @@ parzen.kernel <- function(x) {
     x <- abs(x)
     w[x > 1] <- 0
     w[x <= 0.5] <- 1 - 6 * x[x <= 0.5]^2 + 6 * x[x <= 0.5]^3
-    w[(x <= 1) & (x > 0.5)] = 2 * (1 - x[x <= 1 & (x > 0.5)])^3
+    w[(x <= 1) & (x > 0.5)] <- 2 * (1 - x[x <= 1 & (x > 0.5)])^3
     return(w)
 }
+
+#' Realized Kernel
+#'
+#' @export
+realized.kernel <- function(data, kernel = parzen.kernel, H) {
+    x <- as.vector(data$lret)
+    t <- as.vector(data$Secs)
+    n <- length(x)
+    
+    
+    cstar <- 3.5134
+    omegahat2 <- mean((sapply(1:25, function(q, x) mean(x[seq(1, length(x), q)]^2), x))/2)
+    prevtime <- rep(NA, 1199)
+    for (sec in 1:1199) {
+        grid <- seq(from = min(t) + sec, by = 20 * 60, to = max(t))
+        prevtime[sec] <- sum(x[findInterval(grid, t)]^2, na.rm = TRUE)
+    }
+    IVhat <- mean(prevtime, na.rm = TRUE)
+    noise <- omegahat2/IVhat
+    Hval <- cstar * noise^(2/5) * length(x)^(3/5)
+    H <- min(400, max(0, Hval, na.rm = FALSE))
+    h <- (-H):H
+    w <- kernel(h/(H + 1))
+    sum(w * unlist(sapply(h, function(h, x) t(x[(abs(h) + 1):n]) %*% x[1:(n - abs(h))], x)))
+    
+}
+
 
 #' Exponential kernel
 #'

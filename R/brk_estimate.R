@@ -97,7 +97,7 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         }
     }
     second_prices <- lapply(data_sorted, function(x) to.period(x, period = "seconds", OHLC = FALSE))
-    RK <- unlist(lapply(second_prices, function(x) rTSCov(x,K=min(length(x)/10,300))))
+    RK <- unlist(lapply(second_prices, function(x) rTSCov(x, K = min(length(x)/10, 300))))
     
     BRK <- diag(RK^0.5) %*% blockspace %*% diag(RK^0.5)
     BRK <- (BRK + t(BRK))/2
