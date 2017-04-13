@@ -2,11 +2,10 @@
 #' @export
 
 eigenval_clean <- function(cov_org) {
-    
+
     p <- nrow(cov_org)
     n_obs <- 20000
     corr_org <- diag(diag(cov_org)^(-0.5)) %*% cov_org %*% diag(diag(cov_org)^(-0.5))
-    corr_org[is.na(corr_org)] <- 0
     vals <- eigen(corr_org)
     s <- vals$values
     u <- vals$vectors
