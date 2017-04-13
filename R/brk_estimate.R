@@ -1,20 +1,20 @@
 #' BRK Estimate
 #' ticker <- as.character(read.table('AddInformation/assets.csv')$x)
 #' sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)
-#' @importFrom xts as.xts 
-#' @importFrom xts to.period 
+#' @importFrom xts as.xts
+#' @importFrom xts to.period
 #' @importFrom highfrequency refreshTime
 #' @export
 
 brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
-    
+
     N <- length(tickerlist)
     midquotedata <- vector("list", N)
     names(midquotedata) <- tickerlist
-    
+
     dir.create(as.character(date), showWarnings = FALSE)
     setwd(as.character(date))
-    
+
     for (i in 1:N) {
         ticker <- tickerlist[i]
         tryCatch({
@@ -30,12 +30,12 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
     }
     setwd("..")
     unlink(date, recursive = TRUE)
-    
+
     cstar <- (12^2/0.269)^(1/5)
-    
+
     midquotedata <- lapply(midquotedata, na.omit)
     midquotedata <- lapply(midquotedata, function(x) x[!is.infinite(x)])
-    
+
     nobs <- unlist(as.numeric(as.character(lapply(midquotedata, nrow))))
     not_existent <- tickerlist[is.na(nobs)]
     cat("Missing tickers: ", not_existent, "\n")
@@ -52,9 +52,9 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         print(z)
         tmpspace <- matrix(NA, ncol = Nadj, nrow = Nadj)
         for (w in 1:z) {
-            if (w == 1) 
+            if (w == 1)
                 MYrange <- GLrange
-            if (w != 1) 
+            if (w != 1)
                 MYrange <- GLrange + sum(myblocks[1:(w - 1)])
             rt_prices <- refreshTime(data_sorted[MYrange])
             indexTZ(rt_prices) <- ""
@@ -80,25 +80,25 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         }
         return(tmpspace)
     }
-    
+
     # if(Sys.info()['sysname']!='Windows'){ no_cores <- detectCores() cl<-makeCluster(max(nob,no_cores),type='FORK')
     # a<-parLapply(cl, 1:nob, groupval) stopCluster(cl) }
-    
+
     # if(Sys.info()['sysname']=='Windows') a<-lapply(1:nob,groupval)
     a <- lapply(1:nob, groupval)
     for (z in 1:nob) {
         GLrange = 1:sum(myblocks[1:(nob - z + 1)])
         for (w in 1:z) {
-            if (w == 1) 
+            if (w == 1)
                 MYrange <- GLrange
-            if (w != 1) 
+            if (w != 1)
                 MYrange <- GLrange + sum(myblocks[1:(w - 1)])
             blockspace[MYrange, MYrange] <- a[[z]][MYrange, MYrange]
         }
     }
     second_prices <- lapply(data_sorted, function(x) to.period(x, period = "seconds", OHLC = FALSE))
     RK <- unlist(lapply(second_prices, function(x) rTSCov(x, K = min(length(x)/10, 300))))
-    
+    RK[RK<=0]<-1e-07
     BRK <- diag(RK^0.5) %*% blockspace %*% diag(RK^0.5)
     BRK <- (BRK + t(BRK))/2
     rownames(BRK) <- names(data_sorted)
