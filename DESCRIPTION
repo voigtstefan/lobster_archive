@@ -1,7 +1,7 @@
 Package: lobster
-Title: What the Package Does (one line, title case)
+Title: This package helps to handle, read-in and analyze data from the lobster high-frequency data universe
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: person("Stefan", "Voigt", email = "stefan.voigt@wu.ac.at", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.2.3)
 Imports: dplyr, dtplyr, ggplot2, data.table
