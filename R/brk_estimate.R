@@ -18,7 +18,7 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
     for (i in 1:N) {
         ticker <- tickerlist[i]
         tryCatch({
-            invisible(extract_lobster(ticker, date, folder = paste0("../", folder)))
+            extract_lobster(ticker, date, folder = paste0("../", folder))
             tmp <- readin_lobster(ticker, date)
             tmp <- tmp %>% filter(Type == 4 | Type == 5) %>% select(Midquote, Time)
             tmp <- as.xts(tmp$Midquote, order.by = tmp$Time)
@@ -81,8 +81,11 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         return(tmpspace)
     }
 
-    # if(Sys.info()['sysname']!='Windows'){ no_cores <- detectCores() cl<-makeCluster(max(nob,no_cores),type='FORK')
-    # a<-parLapply(cl, 1:nob, groupval) stopCluster(cl) }
+    # if(Sys.info()['sysname']!='Windows'){
+    #    no_cores <- detectCores()
+    #    cl<-makeCluster(max(nob,no_cores),type='FORK')
+    #    a<-parLapply(cl, 1:nob, groupval)
+    #    stopCluster(cl) }
 
     # if(Sys.info()['sysname']=='Windows') a<-lapply(1:nob,groupval)
     a <- lapply(1:nob, groupval)
@@ -97,8 +100,9 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         }
     }
     second_prices <- lapply(data_sorted, function(x) to.period(x, period = "seconds", OHLC = FALSE))
-    RK <- unlist(lapply(second_prices, function(x) rTSCov(x, K = min(length(x)/10, 300))))
+    RK <- unlist(lapply(second_prices, function(x) rTSCov(exp(x), K = min(length(x)/10, 300))))
     RK[RK<=0]<-1e-07
+    RK[is.na(RK)] <- 1e-07
     BRK <- diag(RK^0.5) %*% blockspace %*% diag(RK^0.5)
     BRK <- (BRK + t(BRK))/2
     rownames(BRK) <- names(data_sorted)
