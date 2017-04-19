@@ -60,5 +60,5 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     var_t <- var_t/bndw_v
     db_t <- sqrt(bndw_m) * mu_t/sqrt(var_t)
-    return(list(db = db_t, mu = mu_t, var = var_t, n_mu = n_mu, n_sigma = n_sigma))
+    return(list(db = db_t, testing.times=testing.time,mu = mu_t, var = var_t, n_mu = n_mu, n_sigma = n_sigma))
 }
