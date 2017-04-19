@@ -9,8 +9,8 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     bndw_m <- 300  # 300 seconds
     bndw_v <- 1500  # 25 Minutes (=25*60 seconds)
-
-    testing.time <- testing.time[testing.time > min(data$Secs) & testing.time< max(data$Secs)][-(1:10)]
+    sort(data$Secs,partial=nrow(data)-1)[n-1]
+    testing.time <- testing.time[testing.time > sort(data$Secs,partial=nrow(data))[5] & testing.time< sort(data$Secs,partial=nrow(data)-1)[nrow(data)-5]][-(1:10)]
 
     mu_t <- rep(NA, length(testing.time))
     var_t <- rep(NA, length(testing.time))
@@ -40,12 +40,10 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
         n <- round(4 * (T/100)^(4/25))
         root <- 1/(2 * q + 1)
         ac <- rep(0, n)
-        if(length(wdxi)==1) ac <- wdxi^2
-        if(length(wdxi)>1){
-            for (j in 1:n) {
+        for (j in 1:n) {
             ac[j] <- 2 * sum(wdxi[(j + 1):length(wdxi)] * wdxi[1:(length(wdxi) - j)])
         }
-        }
+
         s0 <- v0 + sum(ac)
         sq <- sum((1:n)^q * ac)
         gamma <- c * (((sq/s0)^q)^root)
