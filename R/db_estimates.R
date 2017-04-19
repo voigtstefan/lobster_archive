@@ -9,7 +9,6 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     bndw_m <- 300  # 300 seconds
     bndw_v <- 1500  # 25 Minutes (=25*60 seconds)
-    sort(data$Secs,partial=nrow(data)-1)[n-1]
     testing.time <- testing.time[testing.time > sort(data$Secs,partial=nrow(data))[5] & testing.time< sort(data$Secs,partial=nrow(data)-1)[nrow(data)-5]][-(1:10)]
 
     mu_t <- rep(NA, length(testing.time))
