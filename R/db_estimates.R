@@ -40,10 +40,12 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
         n <- round(4 * (T/100)^(4/25))
         root <- 1/(2 * q + 1)
         ac <- rep(0, n)
-        for (j in 1:n) {
+        if(length(wdxi)==1) ac <- wdxi^2
+        if(length(wdxi)>1){
+            for (j in 1:n) {
             ac[j] <- 2 * sum(wdxi[(j + 1):length(wdxi)] * wdxi[1:(length(wdxi) - j)])
         }
-
+        }
         s0 <- v0 + sum(ac)
         sq <- sum((1:n)^q * ac)
         gamma <- c * (((sq/s0)^q)^root)
