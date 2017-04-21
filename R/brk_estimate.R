@@ -19,11 +19,11 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
         ticker <- tickerlist[i]
         tryCatch({
             extract_lobster(ticker, date, folder = paste0("../", folder))
-            tmp <- readin_lobster(ticker, date)
+            tmp <- readin_lobster(ticker, date, output='MB')
             tmp <- tmp %>% filter(Type == 4 | Type == 5) %>% select(Midquote, Time)
             tmp <- as.xts(tmp$Midquote, order.by = tmp$Time)
             midquotedata[[i]] <- log(tmp)
-            remove_lobster(ticker, date)
+            unlink(dir())
         }, error = function(e) {
             cat("Not existent: ", ticker, "\n")
         })
