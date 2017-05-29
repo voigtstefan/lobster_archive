@@ -130,7 +130,7 @@ IVhat_f <- function(rftdata) {
 #' @export
 
 RK.univariate <- function(hft_returns){
-
+    N<-length(hft_returns)
     omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
     omegahat2 <- unlist(lapply(hft_returns, omegaest))
     IVhat <- unlist(lapply(hft_returns, IVhat_f))
