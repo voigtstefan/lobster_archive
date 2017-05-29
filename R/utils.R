@@ -129,19 +129,19 @@ IVhat_f <- function(rftdata) {
 #' RK estimates
 #' @export
 
-RK.univariate <- function(rftdata){
+RK.univariate <- function(hft_returns){
 
     omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
     omegahat2 <- unlist(lapply(hft_returns, omegaest))
     IVhat <- unlist(lapply(hft_returns, IVhat_f))
     noise <- omegahat2/IVhat
-    Hval <- cstar * noise^(2/5) * unlist(lapply(rt_returns, nrow))^(3/5)
+    Hval <- cstar * noise^(2/5) * unlist(lapply(hft_returns, nrow))^(3/5)
 
-   rk <- function(x){
+    rk <- function(x){
     bans <- 0
     for (i in -(ceiling(Hval[x])):(ceiling(Hval[x]))) {
         kernw = parzen.kernel(abs(i)/(Hval[x] + 1))
-        autocov = autocovariance(rftdata[[x]], i)
+        autocov = autocovariance(hft_returns[[x]], i)
         bans = bans + kernw * autocov
     }
     return(bans)}
