@@ -4,10 +4,10 @@
 #' @importFrom scales date_breaks
 #' @export
 plot_lobster <- function(v, var, date = NA, title = "") {
-    if (is.na(date)) 
+    if (is.na(date))
         date = as.Date(v$Time[1])
-    ggplot(v, aes(x = as.POSIXct(date, tz = Sys.timezone()) + Secs, y = eval(parse(text = var)))) + geom_line() + scale_x_datetime(expand = c(0, 
-        0), breaks = date_breaks("1 hour"), labels = date_format("%H:%M", tz = Sys.timezone())) + xlab("Time") + ylab(var) + 
+    ggplot(v, aes(x = as.POSIXct(date, tz = Sys.timezone()) + Secs, y = eval(parse(text = var)))) + geom_line() + scale_x_datetime(expand = c(0,
+        0), breaks = date_breaks("1 hour"), labels = date_format("%H:%M", tz = Sys.timezone())) + xlab("Time") + ylab(var) +
         ggtitle(title) + theme_bw()
 }
 
@@ -20,7 +20,7 @@ applyNS <- function(s, k = 1.5) {
     for (i in 1:length(s)) {
         res <- (s[(1 + i):length(s)] - s[1:(length(s) - i)]) <= k
         cnt[(1 + i):length(s)] <- cnt[(1 + i):length(s)] + res
-        if (!any(res)) 
+        if (!any(res))
             break
     }
     # cnt[cnt==0]<-1
@@ -38,7 +38,7 @@ applyNS <- function(s, k = 1.5) {
 base_mapply <- function(x, width, FUN, ...) {
     FUN <- match.fun(FUN)
     f <- function(i, width, data) {
-        if (i < width) 
+        if (i < width)
             return(NA_real_)
         return(FUN(data[(i - (width - 1)):i], ...))
     }
@@ -64,8 +64,8 @@ realized.kernel <- function(data, kernel = parzen.kernel, H) {
     x <- as.vector(data$lret)
     t <- as.vector(data$Secs)
     n <- length(x)
-    
-    
+
+
     cstar <- 3.5134
     omegahat2 <- mean((sapply(1:25, function(q, x) mean(x[seq(1, length(x), q)]^2), x))/2)
     prevtime <- rep(NA, 1199)
@@ -80,7 +80,7 @@ realized.kernel <- function(data, kernel = parzen.kernel, H) {
     h <- (-H):H
     w <- kernel(h/(H + 1))
     sum(w * unlist(sapply(h, function(h, x) t(x[(abs(h) + 1):n]) %*% x[1:(n - abs(h))], x)))
-    
+
 }
 
 
@@ -96,12 +96,19 @@ exponential.kernel <- function(x) exp(-abs(x)) * (x <= 0)
 #' inputs are Refresh time sampled returns and optimal Hval
 #' @export
 autocovariance <- function(rftdata, hval) {
-    GammaH = t(rftdata[(abs(hval) + 1):nrow(rftdata), ]) %*% rftdata[1:(nrow(rftdata) - abs(hval)), ]
-    if (hval < 0) 
-        return(t(GammaH))
-    if (hval >= 0) 
+    if(ncol(rftdata)>1){
+        GammaH = t(rftdata[(abs(hval) + 1):nrow(rftdata), ]) %*% rftdata[1:(nrow(rftdata) - abs(hval)), ]
+        if (hval < 0)
+            return(t(GammaH))
+        if (hval >= 0)
+            return(GammaH)
+    }
+    if(ncol(rftdata)==1){
+        rftdata =as.vector(rftdata)
+        GammaH = sum(rftdata[(abs(hval) + 1):length(rftdata)] * rftdata[1:(length(rftdata) - abs(hval))])
         return(GammaH)
-}
+    }
+        }
 
 
 #' IV estimate based on 20 minute RV estimates
@@ -117,4 +124,36 @@ IVhat_f <- function(rftdata) {
         prevtime[sec] <- sum(rftdata[findInterval(grid, seconds)]^2, na.rm = TRUE)
     }
     return(mean(prevtime, na.rm = TRUE))
+}
+
+#' RK estimates
+#' @export
+
+RK.univariate <- function(rftdata){
+
+    omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
+    omegahat2 <- unlist(lapply(hft_returns, omegaest))
+    IVhat <- unlist(lapply(hft_returns, IVhat_f))
+    noise <- omegahat2/IVhat
+    Hval <- cstar * noise^(2/5) * unlist(lapply(rt_returns, nrow))^(3/5)
+
+   rk <- function(x){
+    bans <- 0
+    for (i in -(ceiling(Hval[x])):(ceiling(Hval[x]))) {
+        kernw = parzen.kernel(abs(i)/(Hval[x] + 1))
+        autocov = autocovariance(rftdata[[x]], i)
+        bans = bans + kernw * autocov
+    }
+    return(bans)}
+
+    t <- lapply(1:N,rk)
+    return(unlist(t))
+
+}
+
+#' cond
+#' @export
+cond <- function(mat){
+    val <- abs(eigen(mat)$values)
+    return(max(val)/min(val))
 }

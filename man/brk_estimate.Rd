@@ -6,7 +6,7 @@
 ticker <- as.character(read.table('AddInformation/assets.csv')$x)
 sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)}
 \usage{
-brk_estimate(tickerlist, date, nob = 4, folder = ".")
+brk_estimate(tickerlist, date, nob = 4, folder = Sys.getenv("GLOBAL"))
 }
 \description{
 BRK Estimate

@@ -6,88 +6,77 @@
 #' @importFrom highfrequency refreshTime
 #' @export
 
-brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
+brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL')) {
 
+    MidQuotedata <- vector("list", length(tickerlist))
     N <- length(tickerlist)
-    midquotedata <- vector("list", N)
-    names(midquotedata) <- tickerlist
-
-    dir.create(as.character(date), showWarnings = FALSE)
-    setwd(as.character(date))
+    names(MidQuotedata) <- tickerlist
+    N <- length(tickerlist)
+    sdate<-as.POSIXct(date,tz='UTC')
+    attr(sdate,'tzone')<-'UTC'
 
     for (i in 1:N) {
-        ticker <- tickerlist[i]
-        tryCatch({
-            extract_lobster(ticker, date, folder = paste0("../", folder))
-            tmp <- readin_lobster(ticker, date, output='MB')
-            tmp <- tmp %>% filter(Type == 4 | Type == 5) %>% select(Midquote, Time)
-            tmp <- as.xts(tmp$Midquote, order.by = tmp$Time)
-            midquotedata[[i]] <- log(tmp)
-            unlink(dir())
-        }, error = function(e) {
-            cat("Not existent: ", ticker, "\n")
-        })
+        ticker <- ticker_names[i]
+        cat('# Read-in ',ticker,'(',i,') ')
+        path <- paste(folder,ticker,sep='/')
+        tmp <- readin_lobster(ticker,date,folder=path)
+        tmp <- tmp %>% filter(Type==4 | Type==5) %>% select(Secs,Midquote)
+        tmp <- na.omit(tmp)
+        tmp <- as.xts(tmp$Midquote,order.by=sdate+tmp$Secs)
+        MidQuotedata[[i]]<-log(tmp)
+        cat(nrow(MidQuotedata[[i]]),'\n')
     }
-    setwd("..")
-    unlink(date, recursive = TRUE)
 
     cstar <- (12^2/0.269)^(1/5)
 
-    midquotedata <- lapply(midquotedata, na.omit)
-    midquotedata <- lapply(midquotedata, function(x) x[!is.infinite(x)])
+    MidQuotedata <- lapply(MidQuotedata, na.omit)
+    MidQuotedata <- lapply(MidQuotedata, function(x) x[!is.infinite(x)])
 
-    nobs <- unlist(as.numeric(as.character(lapply(midquotedata, nrow))))
-    not_existent <- tickerlist[is.na(nobs)]
-    cat("Missing tickers: ", not_existent, "\n")
-    midquotedata[is.na(nobs)] <- NULL
+    nobs <- unlist(as.numeric(as.character(lapply(MidQuotedata,nrow))))
+    not_existent<-ticker_names[is.na(nobs)]
+    MidQuotedata[is.na(nobs)]<-NULL
     nobs <- na.omit(nobs)
-    nobs_index <- sort(nobs, index = TRUE, decreasing = TRUE)$ix
-    Nadj <- length(midquotedata)
-    groups <- split(names(midquotedata)[nobs_index], ceiling(1:Nadj/(Nadj/nob)))
-    blockspace <- matrix(NA, ncol = Nadj, nrow = Nadj)
-    myblocks <- unlist(lapply(groups, length))
-    data_sorted <- midquotedata[names(midquotedata)[nobs_index]]
+    nobs_index <- order(nobs,decreasing=TRUE)
+
+    groups <-  split(names(MidQuotedata)[nobs_index], ceiling(1:N/(N/nob)))
+    blockspace <- matrix(NA,ncol=N,nrow=N)
+    myblocks <- unlist(lapply(groups,length))
+
+    data_sorted <- MidQuotedata[names(MidQuotedata)[nobs_index]]
+
     groupval <- function(z) {
         GLrange <- 1:sum(myblocks[1:(nob - z + 1)])
         print(z)
-        tmpspace <- matrix(NA, ncol = Nadj, nrow = Nadj)
+        tmpspace <- matrix(NA, ncol = N, nrow = N)
         for (w in 1:z) {
-            if (w == 1)
-                MYrange <- GLrange
-            if (w != 1)
-                MYrange <- GLrange + sum(myblocks[1:(w - 1)])
+            if (w == 1) MYrange <- GLrange
+            if (w != 1) MYrange <- GLrange + sum(myblocks[1:(w - 1)])
             rt_prices <- refreshTime(data_sorted[MYrange])
             indexTZ(rt_prices) <- ""
             rt_returns <- diff(rt_prices)[-1, ]
             T <- nrow(rt_returns)
+            if(z==1&w==1) output.T =T
             omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
             omegahat2 <- unlist(lapply(rt_returns, omegaest))
             IVhat <- unlist(lapply(rt_returns, IVhat_f))
             noise <- omegahat2/IVhat
             Hval <- cstar * noise^(2/5) * unlist(lapply(rt_returns, nrow))^(3/5)
             Hvalstar <- min(400, max(0, mean(Hval, na.rm = FALSE)))
-            bans = matrix(0, nrow = ncol(rt_returns), ncol = ncol(rt_returns))
-            for (i in -(floor(Hvalstar) + 1):(floor(Hvalstar) + 1)) {
+            bans <- matrix(0, nrow = ncol(rt_returns), ncol = ncol(rt_returns))
+            for (i in -(ceiling(Hvalstar)):(ceiling(Hvalstar))) {
                 kernw = parzen.kernel(abs(i)/(Hvalstar + 1))
                 autocov = autocovariance(rt_returns, i)
                 bans = bans + kernw * autocov
+                bans[lower.tri(bans)] = t(bans)[lower.tri(bans)]
             }
-            bans <- 0.5 * (bans + t(bans))
             V <- diag(bans)^(-0.5)
             R <- diag(V, nrow = length(MYrange)) %*% bans %*% diag(V, nrow = length(MYrange))
-            R <- (R + t(R))/2
+            R[lower.tri(R)] = t(R)[lower.tri(R)]
             tmpspace[MYrange, MYrange] <- R
         }
         return(tmpspace)
     }
 
-    # if(Sys.info()['sysname']!='Windows'){
-    #    no_cores <- detectCores()
-    #    cl<-makeCluster(max(nob,no_cores),type='FORK')
-    #    a<-parLapply(cl, 1:nob, groupval)
-    #    stopCluster(cl) }
-
-    # if(Sys.info()['sysname']=='Windows') a<-lapply(1:nob,groupval)
     a <- lapply(1:nob, groupval)
     for (z in 1:nob) {
         GLrange = 1:sum(myblocks[1:(nob - z + 1)])
@@ -99,14 +88,16 @@ brk_estimate <- function(tickerlist, date, nob = 6, folder = ".") {
             blockspace[MYrange, MYrange] <- a[[z]][MYrange, MYrange]
         }
     }
-    second_prices <- lapply(data_sorted, function(x) to.period(x, period = "seconds", OHLC = FALSE))
-    RK <- unlist(lapply(second_prices, function(x) rTSCov(exp(x), K = min(length(x)/10, 300))))
+
+    hft_returns <- lapply(data_sorted,function(x) diff(x)[-1])
+    RK <- RK.univariate(hft_returns)
     RK[RK<=0]<-1e-07
     RK[is.na(RK)] <- 1e-07
     BRK <- diag(RK^0.5) %*% blockspace %*% diag(RK^0.5)
-    BRK <- (BRK + t(BRK))/2
+    BRK[lower.tri(BRK)] = t(BRK)[lower.tri(BRK)]
     rownames(BRK) <- names(data_sorted)
     colnames(BRK) <- names(data_sorted)
-    BRK <- BRK[names(midquotedata), names(midquotedata)]
+    BRK <- BRK[names(MidQuotedata), names(MidQuotedata)]
     saveRDS(BRK, paste0("BRK_", date, "_", nob, ".rds"))
+    return(list(BRK=BRK,T=output.T))
 }
