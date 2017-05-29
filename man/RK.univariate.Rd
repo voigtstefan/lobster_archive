@@ -4,7 +4,7 @@
 \alias{RK.univariate}
 \title{RK estimates}
 \usage{
-RK.univariate(rftdata)
+RK.univariate(hft_returns)
 }
 \description{
 RK estimates
