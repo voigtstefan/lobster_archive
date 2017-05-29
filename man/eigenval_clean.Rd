@@ -4,7 +4,7 @@
 \alias{eigenval_clean}
 \title{eigenvalue cleaning following Hautsch,Kyj, Oomen 2010}
 \usage{
-eigenval_clean(cov_org)
+eigenval_clean(cov_org, n_obs = 2000)
 }
 \description{
 eigenvalue cleaning following Hautsch,Kyj, Oomen 2010

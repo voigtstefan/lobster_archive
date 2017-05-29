@@ -1,23 +1,17 @@
 #' eigenvalue cleaning following Hautsch,Kyj, Oomen 2010
 #' @export
 
-eigenval_clean <- function(cov_org) {
-
+eigenval_clean <- function(cov_org,n_obs=2000) {
     p <- nrow(cov_org)
-    n_obs <- 20000
-    corr_org <- diag(diag(cov_org)^(-0.5)) %*% cov_org %*% diag(diag(cov_org)^(-0.5))
+    corr_org <- cov2cor(cov_org)
     vals <- eigen(corr_org)
-    s <- vals$values
+    lambda <- vals$values
     u <- vals$vectors
-    vals <- sort(s, decreasing = TRUE, index.return = TRUE)
-    lambda <- vals$x
-    ix <- vals$ix
-    lambda_max <- (1 - lambda[1]/p) * (1 + p/n_obs + 2 * sqrt(p/n_obs))
+    lambda_max <- (1 - max(lambda)/p) * (1 + p/n_obs + 2 * sqrt(p/n_obs))
     lambda_sm <- lambda[lambda <= lambda_max]
     lambda_t <- sum(lambda_sm[lambda_sm > 0])/length(lambda_sm)
-    lambda_cl <- c(lambda[lambda > lambda_max], lambda_t * rep(1, length(lambda_sm)))
-    lambda_cl <- lambda_cl[ix]
-    corr_cl <- u %*% diag(lambda_cl) %*% t(u)
+    lambda[lambda<lambda_max]<-lambda_t
+    corr_cl <- vals$vectors %*% diag(lambda) %*% t(vals$vectors)
     cov_cl <- diag(diag(cov_org)^(0.5)) %*% corr_cl %*% diag(diag(cov_org)^(0.5))
     rownames(cov_cl) <- rownames(cov_org)
     colnames(cov_cl) <- colnames(cov_cl)

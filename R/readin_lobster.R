@@ -11,7 +11,6 @@ readin_lobster <- function(ticker, date, nlevels = 1, output = "ALL", folder = "
     if (missing(date) || class(try(as.Date(date, format = "%d-%m-%Y %H:%M:%S"))) %in% "try-error" || is.na(date))
         stop("Need to specify valid date.")
     start <- 3600 * 9.5 * 1000
-# #importFrom magrittr '%>%'
 
         end <- 3600 * 16 * 1000
     mes <- paste0(paste(ticker, date, start, end, "message", nlevels, sep = "_"), ".csv")
