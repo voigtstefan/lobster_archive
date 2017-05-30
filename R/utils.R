@@ -131,12 +131,12 @@ IVhat_f <- function(rftdata) {
 
 RK.univariate <- function(hft_returns){
     N<-length(hft_returns)
-    omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
+    omegaest <- function(returns) max(sum(returns[-1] * returns[1:(length(returns) - 1)])/(length(returns) - 1), 0)
     omegahat2 <- unlist(lapply(hft_returns, omegaest))
     IVhat <- unlist(lapply(hft_returns, IVhat_f))
     noise <- omegahat2/IVhat
     cstar <- (12^2/0.269)^(1/5)
-    Hval <- cstar * noise^(2/5) * unlist(lapply(hft_returns, nrow))^(3/5)
+    Hval <- cstar * noise^(2/5) * unlist(lapply(hft_returns, length))^(3/5)
 
     rk <- function(x){
     bans <- 0
