@@ -155,6 +155,6 @@ RK.univariate <- function(hft_returns){
 #' cond
 #' @export
 cond <- function(mat){
-    val <- abs(eigen(mat)$values)
-    return(max(val)/min(val))
+    val <- eigen(mat)$values
+    return(abs(max(val)/min(val)))
 }

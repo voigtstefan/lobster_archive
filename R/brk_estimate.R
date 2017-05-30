@@ -55,7 +55,6 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
             indexTZ(rt_prices) <- ""
             rt_returns <- diff(rt_prices)[-1, ]
             T <- nrow(rt_returns)
-            if(z==1&w==1) output.T =T
             omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
             omegahat2 <- unlist(lapply(rt_returns, omegaest))
             IVhat <- unlist(lapply(rt_returns, IVhat_f))
@@ -99,5 +98,6 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     colnames(BRK) <- names(data_sorted)
     BRK <- BRK[names(MidQuotedata), names(MidQuotedata)]
     saveRDS(BRK, output_file)
+    output.T <- nrow(refreshTime(data_sorted))
     return(list(BRK=BRK,T=output.T))
 }
