@@ -6,7 +6,7 @@
 #' @importFrom highfrequency refreshTime
 #' @export
 
-brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL')) {
+brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'), output_file=paste0("BRK_", date, "_", nob, ".rds")) {
 
     MidQuotedata <- vector("list", length(tickerlist))
     N <- length(tickerlist)
@@ -98,6 +98,6 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     rownames(BRK) <- names(data_sorted)
     colnames(BRK) <- names(data_sorted)
     BRK <- BRK[names(MidQuotedata), names(MidQuotedata)]
-    saveRDS(BRK, paste0("BRK_", date, "_", nob, ".rds"))
+    saveRDS(BRK, output_file)
     return(list(BRK=BRK,T=output.T))
 }
