@@ -89,6 +89,7 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     }
 
     hft_returns <- lapply(data_sorted,function(x) diff(x)[-1])
+    hft_returns <- lapply(hft_returns,function(x) x[abs(x)<0.8])
     RK <- RK.univariate(hft_returns)
     RK[RK<=0]<-1e-07
     RK[is.na(RK)] <- 1e-07
