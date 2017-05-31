@@ -147,8 +147,9 @@ RK.univariate <- function(hft_returns){
     }
     return(bans)}
 
-    t <- lapply(1:N,rk)
-    return(unlist(t))
+    t <- rep(NA,N)
+    for(n in 1:N) t[n]<-rk(n)
+    return(t)
 
 }
 
