@@ -140,7 +140,7 @@ RK.univariate <- function(hft_returns){
 
     rk <- function(x){
     bans <- 0
-    for (i in -(ceiling(Hval[x])):(ceiling(Hval[x]))) {
+    for (i in -min(20,ceiling(Hval[x])):min(20,ceiling(Hval[x]))) {
         kernw <- parzen.kernel(abs(i)/(Hval[x] + 1))
         autocov <- autocovariance(hft_returns[[x]], i)
         bans <- bans + kernw * autocov
