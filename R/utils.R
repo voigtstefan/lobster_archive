@@ -137,20 +137,19 @@ RK.univariate <- function(hft_returns){
     noise <- omegahat2/IVhat
     cstar <- (12^2/0.269)^(1/5)
     Hval <- cstar * noise^(2/5) * unlist(lapply(hft_returns, length))^(3/5)
+    Hval <- sapply(Hval,function(x)min(x,150))
 
     rk <- function(x){
     bans <- 0
-    for (i in -min(200,ceiling(Hval[x])):min(200,ceiling(Hval[x]))) {
-        kernw <- parzen.kernel(abs(i)/(min(200,Hval[x]) + 1))
+    for (i in -ceiling(Hval[x]):ceiling(Hval[x])) {
+        kernw <- parzen.kernel(abs(i)/(Hval[x] + 1))
         autocov <- autocovariance(hft_returns[[x]], i)
         bans <- bans + kernw * autocov
     }
     return(bans)}
 
-    t <- rep(NA,N)
-    for(n in 1:N) t[n]<-rk(n)
-    return(t)
-
+    t<-lapply(1:N,rk)
+    return(unlist(t))
 }
 
 #' cond
