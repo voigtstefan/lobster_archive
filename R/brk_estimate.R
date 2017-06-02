@@ -100,5 +100,5 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     BRK <- BRK[names(MidQuotedata), names(MidQuotedata)]
     saveRDS(BRK, output_file)
     output.T <- nrow(refreshTime(data_sorted))
-    return(list(BRK=BRK,T=output.T))
+    return(list(BRK=BRK,T.num=output.T))
 }
