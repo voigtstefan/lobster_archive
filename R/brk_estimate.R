@@ -16,7 +16,7 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     attr(sdate,'tzone')<-'UTC'
 
     for (i in 1:N) {
-        ticker <- ticker_names[i]
+        ticker <- tickerlist[i]
         cat('# Read-in ',ticker,'(',i,') ')
         path <- paste(folder,ticker,sep='/')
         tmp <- readin_lobster(ticker,date,folder=path)
@@ -33,7 +33,7 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
     MidQuotedata <- lapply(MidQuotedata, function(x) x[!is.infinite(x)])
 
     nobs <- unlist(as.numeric(as.character(lapply(MidQuotedata,nrow))))
-    not_existent<-ticker_names[is.na(nobs)]
+    not_existent<-tickerlist[is.na(nobs)]
     MidQuotedata[is.na(nobs)]<-NULL
     nobs <- na.omit(nobs)
     nobs_index <- order(nobs,decreasing=TRUE)
