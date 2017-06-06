@@ -1,15 +1,15 @@
-#' plot_lobster
-#'
-#' @import ggplot2
-#' @importFrom scales date_breaks
-#' @export
-plot_lobster <- function(v, var, date = NA, title = "") {
-    if (is.na(date))
-        date = as.Date(v$Time[1])
-    ggplot(v, aes(x = as.POSIXct(date, tz = Sys.timezone()) + Secs, y = eval(parse(text = var)))) + geom_line() + scale_x_datetime(expand = c(0,
-        0), breaks = date_breaks("1 hour"), labels = date_format("%H:%M", tz = Sys.timezone())) + xlab("Time") + ylab(var) +
-        ggtitle(title) + theme_bw()
-}
+## plot_lobster
+##
+## @import ggplot2
+## @importFrom scales date_breaks
+## @export
+#plot_lobster <- function(v, var, date = NA, title = "") {
+#    if (is.na(date))
+#        date = as.Date(v$Time[1])
+#    ggplot(v, aes(x = as.POSIXct(date, tz = Sys.timezone()) + Secs, y = eval(parse(text = var)))) + geom_line() + scale_x_datetime(expand = c(0,
+#        0), breaks = date_breaks("1 hour"), labels = date_format("%H:%M", tz = Sys.timezone())) + xlab("Time") + ylab(var) +
+#        ggtitle(title) + theme_bw()
+#}
 
 #' applyNS
 #'
