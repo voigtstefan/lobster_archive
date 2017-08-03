@@ -26,7 +26,7 @@ readin_lobster <- function(ticker, date, nlevels = 1, output = "ALL", folder = "
     if (!identical(output, "MB")) {
         o_raw <- as.data.frame(fread(paste(folder, ord, sep = "/"), integer64 = "numeric"))
         names(o_raw) <- paste0(rep(c("Askp", "Asks", "Bidp", "Bids"), each = 1, times = nlevels), rep(1:nlevels, each = 4))
-        o <- o_raw %>% mutate_at(funs(./10000), seq(from = 1, to = nlevels * 4, by = 2)) %>% transform(Spread = Askp1 -
+        o <- o_raw %>% mutate_each(funs(./10000), seq(from = 1, to = nlevels * 4, by = 2)) %>% transform(Spread = Askp1 -
             Bidp1, Midquote = Bidp1 + (Askp1 - Bidp1)/2)
     }
     if (identical(output, "ALL"))
