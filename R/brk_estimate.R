@@ -55,9 +55,15 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv('GLOBAL'
             indexTZ(rt_prices) <- ""
             rt_returns <- diff(rt_prices)[-1, ]
             T <- nrow(rt_returns)
-            omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
-            omegahat2 <- unlist(lapply(rt_returns, omegaest))
-            IVhat <- unlist(lapply(rt_returns, IVhat_f))
+            omega <- function(q, prices) {
+                q_returns <- diff(prices[seq(1, length(prices), q)])[-1]
+                sum(q_returns^2)/(length(q_returns) - 1)
+            }
+            omegahat2 <- unlist(lapply(rt_prices, function(prices)mean(sapply(1:25,omega,prices))))
+
+#            omegaest <- function(returns) max(sum(returns[-1] * returns[1:(nrow(returns) - 1)])/(nrow(returns) - 1), 0)
+#            omegahat2 <- unlist(lapply(rt_returns, omegaest))
+            IVhat <- unlist(lapply(rt_prices, IVhat_f))
             noise <- omegahat2/IVhat
             Hval <- cstar * noise^(2/5) * unlist(lapply(rt_returns, nrow))^(3/5)
             Hvalstar <- min(400, max(0, mean(Hval, na.rm = FALSE)))

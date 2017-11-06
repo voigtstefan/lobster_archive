@@ -16,7 +16,7 @@
 #' This function generates the Ledoit-Wolf covariance estimator and mean vector as inputs to draw from the predictive posterior distribution
 #' @importFrom zoo rollmedian
 #' @importFrom stats median
-#' @export
+
 create_midprice <- function(ticker, date, nlevels = 1, folder = ".") {
 
     start <- 3600 * 9.5

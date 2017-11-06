@@ -4,7 +4,7 @@
 \name{lobster}
 \alias{lobster}
 \title{Lobster: Limit order book sample}
-\format{A data frame with 53940 rows and 10 variables:
+\format{A data frame with 53.940 rows and 10 variables:
 \describe{
   \item{price}{price, in US dollars}
   \item{carat}{weight of the diamond, in carats}
@@ -17,6 +17,6 @@
 lobster
 }
 \description{
-Amazond data sample
+Amazon data sample
 }
 \keyword{datasets}

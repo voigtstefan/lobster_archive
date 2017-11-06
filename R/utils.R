@@ -1,16 +1,3 @@
-## plot_lobster
-##
-## @import ggplot2
-## @importFrom scales date_breaks
-## @export
-#plot_lobster <- function(v, var, date = NA, title = "") {
-#    if (is.na(date))
-#        date = as.Date(v$Time[1])
-#    ggplot(v, aes(x = as.POSIXct(date, tz = Sys.timezone()) + Secs, y = eval(parse(text = var)))) + geom_line() + scale_x_datetime(expand = c(0,
-#        0), breaks = date_breaks("1 hour"), labels = date_format("%H:%M", tz = Sys.timezone())) + xlab("Time") + ylab(var) +
-#        ggtitle(title) + theme_bw()
-#}
-
 #' applyNS
 #'
 #' Counts number of trades during last k seconds
@@ -65,9 +52,9 @@ realized.kernel <- function(data, kernel = parzen.kernel, H) {
     t <- as.vector(data$Secs)
     n <- length(x)
 
-
     cstar <- 3.5134
-    omegahat2 <- mean((sapply(1:25, function(q, x) mean(x[seq(1, length(x), q)]^2), x))/2)
+    omegahat2 <- mean((sapply(1:25,
+                              function(q, x) mean(x[seq(1, length(x), q)]^2), x))/2)
     prevtime <- rep(NA, 1199)
     for (sec in 1:1199) {
         grid <- seq(from = min(t) + sec, by = 20 * 60, to = max(t))
@@ -121,7 +108,7 @@ IVhat_f <- function(rftdata) {
     prevtime <- rep(NA, 1199)
     for (sec in 1:1199) {
         grid <- seq(from = 34200 + sec, by = 20 * 60, to = 57600)
-        prevtime[sec] <- sum(rftdata[findInterval(grid, seconds)]^2, na.rm = TRUE)
+        prevtime[sec] <- sum(diff(rftdata[findInterval(grid, seconds)])^2, na.rm = TRUE)
     }
     return(mean(prevtime, na.rm = TRUE))
 }
