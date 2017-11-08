@@ -4,7 +4,7 @@
 #' @return Cleaned Matrix of same size as cov_org
 #' @export
 
-eigenval_clean <- function(cov_org, n_obs = 2000) {
+eigenvalue_cleaning <- function(cov_org, n_obs = 2000) {
     p <- nrow(cov_org)
     corr_org <- cov2cor(cov_org)
     vals <- eigen(corr_org)
