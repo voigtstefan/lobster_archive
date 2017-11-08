@@ -39,7 +39,6 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv("GLOBAL"
         cat(nrow(MidQuotedata[[i]]), "\n")
     }
 
-    cstar <- (12^2/0.269)^(1/5)
 
     MidQuotedata <- lapply(MidQuotedata, na.omit)
     MidQuotedata <- lapply(MidQuotedata, function(x) x[!is.infinite(x)])
@@ -57,6 +56,7 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv("GLOBAL"
     data_sorted <- MidQuotedata[names(MidQuotedata)[nobs_index]]
 
     groupval <- function(z) {
+        cstar <- (12^2/0.269)^(1/5)
         GLrange <- 1:sum(myblocks[1:(nob - z + 1)])
         print(z)
         tmpspace <- matrix(NA, ncol = N, nrow = N)
