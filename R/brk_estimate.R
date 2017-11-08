@@ -107,17 +107,15 @@ brk_estimate <- function(tickerlist, date, nob = 4, folder = Sys.getenv("GLOBAL"
         }
     }
 
-    hft_returns <- lapply(data_sorted, function(x) diff(x)[-1])
-    hft_returns <- lapply(hft_returns, function(x) x[abs(x) < 0.8])
-    RK <- RK.univariate(hft_returns)
+    RK <- unlist(lapply(data_sorted, realized_kernel))
     RK[RK <= 0] <- 1e-07
     RK[is.na(RK)] <- 1e-07
     BRK <- diag(RK^0.5) %*% blockspace %*% diag(RK^0.5)
-    BRK[lower.tri(BRK)] = t(BRK)[lower.tri(BRK)]
+    BRK[lower.tri(BRK)] <- t(BRK)[lower.tri(BRK)]
     rownames(BRK) <- names(data_sorted)
     colnames(BRK) <- names(data_sorted)
     BRK <- BRK[names(MidQuotedata), names(MidQuotedata)]
     saveRDS(BRK, output_file)
-    output.T <- nrow(refreshTime(data_sorted))
+    output.T <- nrow(highfrequency::refreshTime(data_sorted))
     return(list(BRK = BRK, T.num = output.T))
 }
