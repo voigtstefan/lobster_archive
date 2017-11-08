@@ -2,10 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{riwish}
 \alias{riwish}
-\title{inverse wishart}
+\title{Inverse wishart
+Samples from an inverse wishart distribution with Scale matrix S and degrees of freedom v.
+Equivalent to Wishart distribution with scale $S^{-1}$.}
 \usage{
 riwish(v, S)
 }
-\description{
-inverse wishart
+\arguments{
+\item{v}{degrees of freedom}
+
+\item{S}{scale matrix}
 }

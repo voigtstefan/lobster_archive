@@ -6,6 +6,9 @@
 \usage{
 exponential.kernel(x)
 }
-\description{
-Exponential kernel
+\arguments{
+\item{x}{input value (vectors also allowed)}
+}
+\value{
+Exponential kernel evaluated at x
 }

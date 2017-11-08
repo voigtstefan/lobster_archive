@@ -2,10 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{applyNS}
 \alias{applyNS}
-\title{applyNS}
+\title{applyNS
+Counts number of trades during last k seconds}
 \usage{
 applyNS(s, k = 1.5)
 }
-\description{
-Counts number of trades during last k seconds
+\arguments{
+\item{s}{time-vector (seconds)}
+
+\item{k}{(default = 1.5)}
+}
+\value{
+cnt vector of same length at s, indicating number of occurences during [t,t-k]
 }

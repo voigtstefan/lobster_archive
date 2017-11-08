@@ -4,7 +4,10 @@
 \alias{IVhat_f}
 \title{IV estimate based on 20 minute RV estimates}
 \usage{
-IVhat_f(rftdata)
+IVhat_f(rftprices)
+}
+\arguments{
+\item{rftprices}{Refresh time sampled (log) prices (xts object with N columns (assets) and T rows (observations))}
 }
 \description{
 IV estimate based on 20 minute RV estimates

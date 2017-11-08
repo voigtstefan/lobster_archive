@@ -2,10 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{cond}
 \alias{cond}
-\title{cond}
+\title{Conditioning number
+Returns the conditioning number of a matrix}
 \usage{
 cond(mat)
 }
-\description{
-cond
+\arguments{
+\item{mat}{N x N matrix}
+}
+\value{
+Ratio of highest over smallest eigenvalue
 }

@@ -2,10 +2,13 @@
 % Please edit documentation in R/utils.R
 \name{rwish}
 \alias{rwish}
-\title{wishart}
+\title{Wishart
+Samples from a Wishart distribution}
 \usage{
 rwish(v, S)
 }
-\description{
-wishart
+\arguments{
+\item{v}{degrees of freedom}
+
+\item{S}{scale matrix}
 }

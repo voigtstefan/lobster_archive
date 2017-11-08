@@ -2,11 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{autocovariance}
 \alias{autocovariance}
-\title{Autocovariane}
+\title{Autocovariane
+
+computes the Autocovariance matrices
+inputs are Refresh time sampled returns and optimal Hval}
 \usage{
 autocovariance(rftdata, hval)
 }
-\description{
-computes the Autocovariance matrices
-inputs are Refresh time sampled returns and optimal Hval
+\arguments{
+\item{rftdata}{Refresh time sampled returns (xts object with N columns (assets) and T rows (observations))}
+
+\item{hval}{bandwith (lag)}
+}
+\value{
+Autocovariance matrix at lat hval
 }

@@ -2,10 +2,20 @@
 % Please edit documentation in R/readin_lobster.R
 \name{readin_lobster}
 \alias{readin_lobster}
-\title{readin_lobster}
+\title{Read-in lobster files
+
+This function reads-in extracted Lobster Files (either Orderbook, Messagebook or both)}
 \usage{
 readin_lobster(ticker, date, nlevels = 1, output = "ALL", folder = ".")
 }
-\description{
-This function reads-in extracted Lobster Files (either Orderbook, Messagebook or both)
+\arguments{
+\item{ticker}{string Name of the ticker}
+
+\item{date}{Date (string)}
+
+\item{nlevels}{Number of Orderbook Levels available}
+
+\item{output}{Either 'ALL', 'OB' (only orderbook), or 'MB' (only messages)}
+
+\item{folder}{Relative path to file storage}
 }

@@ -2,10 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{parzen.kernel}
 \alias{parzen.kernel}
-\title{Computes the Parzen Kernel}
+\title{Parzen Kernel
+Computes the Parzen-Kernel}
 \usage{
 parzen.kernel(x)
 }
-\description{
-Computes the Parzen Kernel
+\arguments{
+\item{x}{value (also vectors allowed) at which to evaluate the Parzen-Kernel}
+}
+\value{
+w Parzen-Kernel
 }

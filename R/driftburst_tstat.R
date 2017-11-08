@@ -1,15 +1,24 @@
-#' Drift-Burst t-statistic
-#' data(lobster)
-#' lobster
+#' @title Drift-Burst t-statistic
+#' Function computes drift-burst statistics from [Christensen, Oomen, Reno](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2842535)
+#' @param lobster Data-frame from lobster
+#' @param testing.time Testing time (default = every observations (after discarding the first 5))
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr mutate_each
+#' @return
 #' @export
-db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
+driftburst_tstat <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     # L_m <- 5 # Parzen Kernel Bandwith L_v <- 25 interval <- 5 # seconds
-    data <- lobster %>% transmute(Secs = Secs, lret = c(NA, diff(log(Midquote)))) %>% na.omit() %>% filter(lret != 0)
+    data <- lobster %>%
+                transmute(Secs = Secs,
+                          lret = c(NA, diff(log(Midquote)))) %>%
+                na.omit() %>%
+                dplyr::filter(lret != 0)
 
     bndw_m <- 300  # 300 seconds
     bndw_v <- 1500  # 25 Minutes (=25*60 seconds)
-    testing.time <- testing.time[testing.time > sort(data$Secs,partial=nrow(data))[5] & testing.time< sort(data$Secs,partial=nrow(data)-1)[nrow(data)-5]][-(1:10)]
+    testing.time <- testing.time[testing.time > sort(data$Secs, partial = nrow(data))[5] & testing.time < sort(data$Secs,
+        partial = nrow(data) - 1)[nrow(data) - 5]][-(1:10)]
 
     mu_t <- rep(NA, length(testing.time))
     var_t <- rep(NA, length(testing.time))
@@ -18,14 +27,15 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
     n_lag <- rep(NA, length(testing.time))
 
     for (i in 1:length(testing.time)) {
-        dat_m <- data %>% filter(Secs < testing.time[i] & Secs > testing.time[i] - bndw_m) %>% transform(w = parzen.kernel((Secs -
-            testing.time[i])/bndw_m))
+        dat_m <- data %>%
+                    filter(Secs < testing.time[i] & Secs > testing.time[i] - bndw_m) %>%
+                    transform(w = parzen.kernel((Secs - testing.time[i])/bndw_m))
         n_mu[i] <- sum(dat_m$w)
         mu_t[i] <- sum(dat_m$w * dat_m$lret)/bndw_m
 
         if (bndw_v != bndw_m) {
-            dat_v <- data %>% filter(Secs < testing.time[i] & Secs > testing.time[i] - bndw_v) %>% transform(w = parzen.kernel((Secs -
-                testing.time[i])/bndw_v))
+            dat_v <- data %>%
+                filter(Secs < testing.time[i] & Secs > testing.time[i] - bndw_v) %>% transform(w = parzen.kernel((Secs - testing.time[i])/bndw_v))
         }
         if (bndw_v == bndw_m)
             dat_v <- dat_m
@@ -59,5 +69,5 @@ db_estimates <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     var_t <- var_t/bndw_v
     db_t <- sqrt(bndw_m) * mu_t/sqrt(var_t)
-    return(list(db = db_t, testing.times=testing.time,mu = mu_t, var = var_t, n_mu = n_mu, n_sigma = n_sigma))
+    return(list(db = db_t, testing.times = testing.time, mu = mu_t, var = var_t, n_mu = n_mu, n_sigma = n_sigma))
 }

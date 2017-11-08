@@ -2,13 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{base_mapply}
 \alias{base_mapply}
-\title{base_mapply}
-\usage{
-base_mapply(x, width, FUN, ...)
-}
-\description{
+\title{base_mapply
 Base mapply function
 Use this function to compute 'rolling-window'-like calculations with columnd depend window sizes.
 e.g. if you want to compute the rolling mean over all trades which took place during the last 1.5 seconds
-the command is base_mapply(lobster$Price,width=applyNS(lobster$Secs),FUN=mean)
+the command is base_mapply(lobster$Price,width=applyNS(lobster$Secs),FUN=mean)}
+\usage{
+base_mapply(x, width, FUN, ...)
 }

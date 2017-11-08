@@ -2,10 +2,15 @@
 % Please edit documentation in R/baing.R
 \name{baing_clean}
 \alias{baing_clean}
-\title{regularization based on factor structure following Hautsch,Kyj, Oomen 2010}
+\title{Regularization of Variance-Covariance Matrix (Hautsch, Kyj, Oomen; 2010)}
 \usage{
 baing_clean(cov_org, factors = 3)
 }
-\description{
-regularization based on factor structure following Hautsch,Kyj, Oomen 2010
+\arguments{
+\item{cov_org}{N x N variance-covariance matrix}
+
+\item{factors}{(default=3) number of retained eigenvalues}
+}
+\value{
+cov_cl N x N cleaned variance-covariance matrix
 }
