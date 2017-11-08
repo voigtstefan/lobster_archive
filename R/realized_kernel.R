@@ -3,7 +3,7 @@
 #' @export
 realized_kernel <- function(hft_prices) {
     N <- length(hft_prices)
-
+    cstar <- (12^2/0.269)^(1/5)
     omega <- function(q, prices) {
         q_returns <- diff(prices[seq(from = 1, to = length(prices), by = q)])[-1]
         sum(q_returns^2)/(sum(q_returns!=0) - 1)
