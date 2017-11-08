@@ -2,15 +2,21 @@
 % Please edit documentation in R/brk_estimate.R
 \name{brk_estimate}
 \alias{brk_estimate}
-\title{BRK Estimate
-ticker <- as.character(read.table('AddInformation/assets.csv')$x)
-sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)}
+\title{Compute Blocked-Realized Kernels}
 \usage{
 brk_estimate(tickerlist, date, nob = 4, folder = Sys.getenv("GLOBAL"),
   output_file = paste0("BRK_", date, "_", nob, ".rds"))
 }
-\description{
-BRK Estimate
+\arguments{
+\item{tickerlist}{Vector of length N with the names of the tickers}
+
+\item{date}{Date for which the BRK should be computed (String)}
+
+\item{nob}{Number of Groups}
+
+\item{folder}{Relative path to the storage of the lobster files (extracted)}
+
+\item{output_file}{Relative path to store the estimated matrices (naming convention: BRK_date_nob.rds)
 ticker <- as.character(read.table('AddInformation/assets.csv')$x)
-sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)
+sim_days <- as.Date(read.table('AddInformation/trading_days.csv')$x)}
 }

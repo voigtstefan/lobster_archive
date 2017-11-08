@@ -9,7 +9,7 @@ applyNS <- function(s, k = 1.5) {
     for (i in 1:length(s)) {
         res <- (s[(1 + i):length(s)] - s[1:(length(s) - i)]) <= k
         cnt[(1 + i):length(s)] <- cnt[(1 + i):length(s)] + res
-        if (!any(res))
+        if (!any(res)) 
             break
     }
     return(cnt)
@@ -25,7 +25,7 @@ applyNS <- function(s, k = 1.5) {
 base_mapply <- function(x, width, FUN, ...) {
     FUN <- match.fun(FUN)
     f <- function(i, width, data) {
-        if (i < width)
+        if (i < width) 
             return(NA_real_)
         return(FUN(data[(i - (width - 1)):i], ...))
     }
@@ -62,15 +62,17 @@ exponential.kernel <- function(x) exp(-abs(x)) * (x <= 0)
 #' @export
 autocovariance <- function(rftdata, hval) {
     if (ncol(rftdata) > 1) {
-        GammaH = t(rftdata[(abs(hval) + 1):nrow(rftdata), ]) %*% rftdata[1:(nrow(rftdata) - abs(hval)), ]
-        if (hval < 0)
+        GammaH = t(rftdata[(abs(hval) + 1):nrow(rftdata), ]) %*% rftdata[1:(nrow(rftdata) - 
+            abs(hval)), ]
+        if (hval < 0) 
             return(t(GammaH))
-        if (hval >= 0)
+        if (hval >= 0) 
             return(GammaH)
     }
     if (ncol(rftdata) == 1) {
         rftdata = as.vector(rftdata)
-        GammaH = sum(rftdata[(abs(hval) + 1):length(rftdata)] * rftdata[1:(length(rftdata) - abs(hval))])
+        GammaH = sum(rftdata[(abs(hval) + 1):length(rftdata)] * rftdata[1:(length(rftdata) - 
+            abs(hval))])
         return(GammaH)
     }
 }
@@ -82,8 +84,8 @@ autocovariance <- function(rftdata, hval) {
 #' @importFrom lubridate second
 #' @export
 IVhat_f <- function(rftprices) {
-    seconds <- cbind(hour(time(rftprices)), minute(time(rftprices)), second(time(rftprices))) %*% c(3600, 60,
-        1)
+    seconds <- cbind(hour(time(rftprices)), minute(time(rftprices)), second(time(rftprices))) %*% 
+        c(3600, 60, 1)
     prevtime <- rep(NA, 1199)
     for (sec in 1:1199) {
         grid <- seq(from = 34200 + sec, by = 20 * 60, to = 57600)
@@ -118,9 +120,9 @@ riwish <- function(v, S) {
 #' @param v degrees of freedom
 #' @export
 rwish <- function(v, S) {
-    if (!is.matrix(S))
+    if (!is.matrix(S)) 
         S <- matrix(S)
-    if (v < nrow(S))
+    if (v < nrow(S)) 
         stop(message = "v is less than the dimension of S in rwish().\n")
     p <- nrow(S)
     CC <- chol(S)

@@ -7,12 +7,14 @@
 #' @return file names to verify that extraction worked
 #' @export
 extract_lobster <- function(ticker, date, nlevels = 1, folder = ".") {
-    orderbook_file <- paste(paste(ticker, date, 34200000, 57600000, "orderbook", nlevels, sep = "_"), "csv",
-        sep = ".")
-    message_file <- paste(paste(ticker, date, 34200000, 57600000, "message", nlevels, sep = "_"), "csv", sep = ".")
+    orderbook_file <- paste(paste(ticker, date, 34200000, 57600000, "orderbook", 
+        nlevels, sep = "_"), "csv", sep = ".")
+    message_file <- paste(paste(ticker, date, 34200000, 57600000, "message", nlevels, 
+        sep = "_"), "csv", sep = ".")
     if (!all(file.exists(c(orderbook_file, message_file)))) {
         zipfile <- paste0(folder, "/", ticker, ".7z")
-        command <- paste0("7za x ", zipfile, " *", strftime(date, "%Y-%m-%d"), "* -r", sep = "")
+        command <- paste0("7za x ", zipfile, " *", strftime(date, "%Y-%m-%d"), "* -r", 
+            sep = "")
         system(command)
     }
     return(c(orderbook_file, message_file))

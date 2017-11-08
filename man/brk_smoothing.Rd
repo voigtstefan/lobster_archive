@@ -2,10 +2,18 @@
 % Please edit documentation in R/brk_smoothing.R
 \name{brk_smoothing}
 \alias{brk_smoothing}
-\title{smoothing}
+\title{Smoothing
+Smoothes (BRK) matrices as in Hautsch et al (2012)
+Warning: BRK matrices have to be named in the following fashion: BRK_number of blocks_ date}
 \usage{
-brk_smoothing(date, periods, folder = ".", nobs = 4)
+brk_smoothing(date, periods = 5, folder = ".", nobs = 4)
 }
-\description{
-smoothing
+\arguments{
+\item{date}{End date (latest matrix included)}
+
+\item{periods}{Number of periods (Default = 5 days)}
+
+\item{folder}{Relative path to the stored BRK matrices}
+
+\item{nobs}{Number of blocks (relevant for the naming convention)}
 }

@@ -2,10 +2,20 @@
 % Please edit documentation in R/extract_lobster.R
 \name{extract_lobster}
 \alias{extract_lobster}
-\title{extract_lobster}
+\title{Extract lobster files
+This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)}
 \usage{
 extract_lobster(ticker, date, nlevels = 1, folder = ".")
 }
-\description{
-This function extracts 7z files containing LOBSTER date (NOTE: 7z has to be included into the system PATH!)
+\arguments{
+\item{ticker}{string Name of the ticker}
+
+\item{date}{Date (string)}
+
+\item{nlevels}{Number of Orderbook Levels available}
+
+\item{folder}{Relative path to file storage}
+}
+\value{
+file names to verify that extraction worked
 }

@@ -2,10 +2,17 @@
 % Please edit documentation in R/remove_lobster.R
 \name{remove_lobster}
 \alias{remove_lobster}
-\title{remove_lobster}
+\title{Remove lobster files
+This function removes extracted lobster data files}
 \usage{
 remove_lobster(ticker, date, nlevels = 1, folder = ".")
 }
-\description{
-This function removes extracted lobster data files
+\arguments{
+\item{ticker}{string Name of the ticker}
+
+\item{date}{Date (string)}
+
+\item{nlevels}{Number of Orderbook Levels available}
+
+\item{folder}{Relative path to file storage}
 }
