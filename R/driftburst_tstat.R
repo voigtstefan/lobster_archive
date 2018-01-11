@@ -6,14 +6,11 @@
 #' @importFrom dplyr mutate_each
 #' @return vector with t stat values
 #' @export
-driftburst_tstat <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
+driftburst_tstat <- function(lobster, testing.time = lobster$Secs[-c(1:5)], bndw_m = 5*60, bndw_v =5*60) {
 
-    # L_m <- 5 # Parzen Kernel Bandwith L_v <- 25 interval <- 5 # seconds
     data <- lobster %>% transmute(Secs = Secs, lret = c(NA, diff(log(Midquote)))) %>%
         na.omit() %>% dplyr::filter(lret != 0)
 
-    bndw_m <- 300  # 300 seconds
-    bndw_v <- 1500  # 25 Minutes (=25*60 seconds)
     testing.time <- testing.time[testing.time > sort(data$Secs, partial = nrow(data))[5] &
         testing.time < sort(data$Secs, partial = nrow(data) - 1)[nrow(data) - 5]][-(1:10)]
 
@@ -25,16 +22,16 @@ driftburst_tstat <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
 
     for (i in 1:length(testing.time)) {
         dat_m <- data %>% filter(Secs < testing.time[i] & Secs > testing.time[i] -
-            bndw_m) %>% transform(w = parzen.kernel((Secs - testing.time[i])/bndw_m))
+            bndw_m) %>% transform(w = lobster::exponential.kernel((Secs - testing.time[i])/bndw_m))
         n_mu[i] <- sum(dat_m$w)
         mu_t[i] <- sum(dat_m$w * dat_m$lret)/bndw_m
 
         if (bndw_v != bndw_m) {
             dat_v <- data %>% filter(Secs < testing.time[i] & Secs > testing.time[i] -
-                bndw_v) %>% transform(w = parzen.kernel((Secs - testing.time[i])/bndw_v))
-        }
-        if (bndw_v == bndw_m)
+                bndw_v) %>% transform(w = lobster::exponential.kernel((Secs - testing.time[i])/bndw_v))
+        }else{
             dat_v <- dat_m
+        }
         n_sigma[i] <- sum(dat_v$w)
         wdxi <- dat_v$w * dat_v$lret
         v0 <- sum(wdxi^2)
@@ -60,7 +57,7 @@ driftburst_tstat <- function(lobster, testing.time = lobster$Secs[-c(1:5)]) {
             ac[j] <- 2 * sum(wdxi[(j + 1):length(wdxi)] * wdxi[1:(length(wdxi) -
                 j)])
         }
-        aux_hac_weight <- parzen.kernel((1:n_aclag)/n_aclag)
+        aux_hac_weight <- lobster::exponential.kernel((1:n_aclag)/n_aclag)
         var_t[i] <- v0 + sum(ac * aux_hac_weight)
         n_lag[i] <- n_aclag
     }
