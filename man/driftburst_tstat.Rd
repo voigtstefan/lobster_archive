@@ -5,12 +5,18 @@
 \title{Drift-Burst t-statistic
 Function computes drift-burst statistics from [Christensen, Oomen, Reno](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2842535)}
 \usage{
-driftburst_tstat(lobster, testing.time = lobster$Secs[-c(1:5)])
+driftburst_tstat(lobster, bndw_m = 300, bndw_v = 5 * bndw_m,
+  grid = seq(from = lobster$Time[1] + bndw_v, to =
+  lobster$Time[nrow(lobster)], by = 60))
 }
 \arguments{
 \item{lobster}{Data-frame from lobster}
 
-\item{testing.time}{Testing time (default = every observations (after discarding the first 5))}
+\item{bndw_m}{bandwidth (mean)}
+
+\item{bndw_v}{bandwidth(volatility)}
+
+\item{grid}{Testing time (default = once per Minute (after discarding the first 5))}
 }
 \value{
 vector with t stat values
